@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSTV3605 Student Portal - Life Sciences Teaching</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        #root {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .app-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #065f46 0%, #059669 100%);
+            color: white;
+            padding: 30px 40px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 600px;
+        }
+        
+        .sidebar {
+            background: #f0fdfa;
+            border-right: 1px solid #99f6e4;
+            padding: 24px 0;
+        }
+        
+        .nav-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+            color: #134e4a;
+        }
+        
+        .nav-item:hover {
+            background: #ccfbf1;
+            color: #0f766e;
+        }
+        
+        .nav-item.active {
+            background: #a7f3d0;
+            border-left-color: #059669;
+            color: #065f46;
+        }
+        
+        .content-area {
+            padding: 40px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #134e4a;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #059669;
+            padding-bottom: 10px;
+        }
+        
+        .card {
+            background: white;
+            border: 1px solid #ccfbf1;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            color: #065f46;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+        
+        .card p, .card li {
+            color: #134e4a;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        
+        .week-card {
+            border-left: 4px solid #10b981;
+            margin-bottom: 16px;
+        }
+        
+        .week-number {
+            font-size: 14px;
+            font-weight: 600;
+            color: #059669;
+            margin-bottom: 8px;
+        }
+        
+        .unit-card {
+            border-left: 4px solid #14b8a6;
+            background: #f0fdfa;
+        }
+        
+        .chat-container {
+            background: #f0fdfa;
+            border-radius: 12px;
+            padding: 24px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .message {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        
+        .message.user {
+            background: #10b981;
+            color: white;
+            margin-left: auto;
+        }
+        
+        .message.assistant {
+            background: #d1fae5;
+            color: #134e4a;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #a7f3d0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .chat-input:focus {
+            border-color: #10b981;
+        }
+        
+        .chat-button {
+            padding: 12px 24px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .chat-button:hover {
+            background: #059669;
+        }
+        
+        .assessment-card {
+            border-left: 4px solid #f59e0b;
+            background: #fffbeb;
+        }
+        
+        .due-date {
+            color: #dc2626;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .reading-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .reading-item {
+            padding: 12px;
+            background: #f0fdfa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #14b8a6;
+        }
+        
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .quick-link-card {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .quick-link-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .faq-item {
+            margin-bottom: 16px;
+        }
+        
+        .faq-question {
+            font-weight: 600;
+            color: #065f46;
+            cursor: pointer;
+            padding: 12px;
+            background: #d1fae5;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .faq-answer {
+            padding: 12px;
+            background: #f0fdfa;
+            border-radius: 6px;
+            color: #134e4a;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 12px;
+            width: 2px;
+            height: 100%;
+            background: #d1fae5;
+        }
+        
+        .timeline-item:last-child::after {
+            display: none;
+        }
+        
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .success-box {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+        
+        const courseData = {
+            moduleInfo: {
+                code: "LSTV3605",
+                name: "Teaching of Life Sciences",
+                credits: 20,
+                nqfLevel: 7,
+                department: "Mathematics, Natural Sciences, and Technology Education",
+                lecturers: ["Prof. J.P.H. Pretorius", "Dr. B.D. Shambare"],
+                emails: ["pretoriusjph@ufs.ac.za", "ShambareB@ufs.ac.za"],
+                phones: ["051 401 3340 (Bloemfontein)", "058 718 5104 (QwaQwa)"],
+                description: "This module equips you with comprehensive knowledge of Life Sciences content, insights into diverse learner backgrounds, and effective pedagogical strategies for FET Phase teaching."
+            },
+            
+            learningUnits: [
+                {
+                    number: 1,
+                    title: "Introduction to AI in Teaching Life Sciences",
+                    subunits: ["AI Tools for Life Science Classrooms", "AI-Enhanced Assessment and Feedback"],
+                    outcomes: [
+                        "Define AI and distinguish between major categories",
+                        "Explain AI's relevance to teaching Life Sciences and CAPS",
+                        "Discuss how AI supports inquiry-based learning",
+                        "Identify opportunities for AI within CAPS strands",
+                        "Describe ethical issues including academic integrity and POPIA compliance"
+                    ]
+                },
+                {
+                    number: 2,
+                    title: "Becoming a Science Teacher",
+                    outcomes: [
+                        "Develop professional identity as a Life Sciences educator",
+                        "Understand the role and responsibilities of science teachers",
+                        "Apply teacher professional standards"
+                    ]
+                },
+                {
+                    number: 3,
+                    title: "Microteaching and Simulated Learning",
+                    outcomes: [
+                        "Plan and deliver microteaching sessions",
+                        "Receive and provide constructive feedback",
+                        "Develop teaching confidence through practice"
+                    ]
+                },
+                {
+                    number: 4,
+                    title: "Develop Your Teaching Theory and Philosophy",
+                    outcomes: [
+                        "Articulate personal teaching philosophy",
+                        "Connect theory to practice",
+                        "Develop evidence-based teaching approaches"
+                    ]
+                },
+                {
+                    number: 5,
+                    title: "Curriculum in Life Sciences",
+                    outcomes: [
+                        "Master CAPS curriculum requirements",
+                        "Plan curriculum coverage and pacing",
+                        "Align teaching with assessment standards"
+                    ]
+                },
+                {
+                    number: 6,
+                    title: "Questioning and Discussion in Life Sciences",
+                    outcomes: [
+                        "Use effective questioning techniques",
+                        "Facilitate scientific discussions",
+                        "Develop higher-order thinking through questioning"
+                    ]
+                },
+                {
+                    number: 7,
+                    title: "Teaching Life Sciences",
+                    subunits: [
+                        "Teaching science as investigation and process",
+                        "Aims and objectives of science education",
+                        "Inclusivity and individual differences",
+                        "Methods for presentation of science teaching"
+                    ],
+                    outcomes: [
+                        "Implement inquiry-based teaching",
+                        "Support diverse learners in science classrooms",
+                        "Use multiple teaching methods effectively"
+                    ]
+                },
+                {
+                    number: 8,
+                    title: "Seven Rules for Emotional Wellness in Life Science Teaching",
+                    outcomes: [
+                        "Maintain teacher wellbeing and resilience",
+                        "Manage classroom stress effectively",
+                        "Support both teacher and learner emotional health"
+                    ]
+                }
+            ],
+            
+            schedule: [
+                { week: 1, date: "9-13 Feb", theme: "Orientation", activity: "1 class lecture + 1 practical" },
+                { week: 2, date: "16-20 Feb", theme: "Unit 1: AI in Teaching Life Sciences", activity: "1 class lecture + 1 practical" },
+                { week: 3, date: "23-27 Feb", theme: "Unit 1.1: AI Tools for Classrooms", activity: "1 class lecture + 1 practical" },
+                { week: 4, date: "2-6 Mar", theme: "Unit 1.2: AI-Enhanced Assessment", activity: "1 class lecture + 1 practical" },
+                { week: 5, date: "9-13 Mar", theme: "Unit 2: Becoming a Science Teacher", activity: "1 class lecture + 1 practical" },
+                { week: 6, date: "16-19 Mar", theme: "Unit 3: Microteaching", activity: "1 class lecture + 1 practical" },
+                { week: 7, date: "23-27 Mar", theme: "Theory Test 1", activity: "40 marks - Units 1-3", assessment: true },
+                { week: 8, date: "8-10 Apr", theme: "Unit 4: Teaching Theory & Philosophy", activity: "1 class lecture + 1 practical" },
+                { week: 9, date: "13-17 Apr", theme: "Unit 5: Curriculum in Life Sciences", activity: "1 class lecture + 1 practical" },
+                { week: 10, date: "20-24 Apr", theme: "Unit 6: Questioning & Discussion", activity: "1 class lecture + 1 practical" },
+                { week: 11, date: "13-17 Jul", theme: "Unit 7: Teaching LS", activity: "1 class lecture + 1 practical" },
+                { week: 12, date: "20-24 Jul", theme: "Theory Test 2", activity: "40 marks - Units 4-7.1", assessment: true },
+                { week: 13, date: "27-31 Jul", theme: "Unit 7.2: Aims & Objectives", activity: "1 class lecture + 1 practical" },
+                { week: 14, date: "3-7 Aug", theme: "Unit 7.3: Inclusivity", activity: "1 class lecture + 1 practical" },
+                { week: 15, date: "10-14 Aug", theme: "Unit 7.4: Teaching Methods", activity: "1 class lecture + 1 practical" },
+                { week: 16, date: "17-21 Aug", theme: "Unit 8: Emotional Wellness", activity: "1 class lecture + 1 practical" },
+                { week: 17, date: "24-28 Aug", theme: "Theory Test 3", activity: "40 marks - Units 7.2-8", assessment: true },
+                { week: 18, date: "31 Aug-4 Sep", theme: "Reflection on Year", activity: "Review and consolidation" },
+                { week: 19, date: "7-11 Sep", theme: "Practical Test", activity: "50 marks - All CAPS practicals Gr 10-11", assessment: true }
+            ],
+            
+            assessments: [
+                {
+                    name: "Theory Test 1",
+                    type: "Individual",
+                    description: "Sit-down theory test covering Units 1-3",
+                    weight: "25%",
+                    marks: 40,
+                    date: "Week 7: 23-27 March (TBC)",
+                    topics: "Introduction to AI, Becoming a Science Teacher, Microteaching"
+                },
+                {
+                    name: "Theory Test 2",
+                    type: "Individual",
+                    description: "Sit-down theory test covering Units 4-7.1",
+                    weight: "25%",
+                    marks: 40,
+                    date: "Week 12: 20-24 July (TBC)",
+                    topics: "Teaching Theory & Philosophy, Curriculum, Questioning, Teaching LS"
+                },
+                {
+                    name: "Theory Test 3",
+                    type: "Individual",
+                    description: "Sit-down theory test covering Units 7.2-8",
+                    weight: "25%",
+                    marks: 40,
+                    date: "Week 17: 24-28 August (TBC)",
+                    topics: "Aims & Objectives, Inclusivity, Teaching Methods, Emotional Wellness"
+                },
+                {
+                    name: "Practical Test",
+                    type: "Individual",
+                    description: "Practical assessment of all CAPS practicals from Grades 10-11",
+                    weight: "25%",
+                    marks: 50,
+                    date: "Week 19: 7-11 September (TBC)",
+                    topics: "All practicals from CAPS Gr. 10-11"
+                }
+            ],
+            
+            faqs: [
+                {
+                    question: "Is this module examinable?",
+                    answer: "No, this is a non-examinable module. Assessment is continuous throughout the year through theory tests and a practical test. No examination will be written at the end of the year."
+                },
+                {
+                    question: "What happens if I submit late or don't submit an assessment?",
+                    answer: "Late submission or non-submission will lead to a 0 being awarded for that assessment activity. Plan ahead and submit on time!"
+                },
+                {
+                    question: "How often do we have contact sessions?",
+                    answer: "Contact sessions take place on a weekly basis, with a blend of face-to-face and online sessions as arranged."
+                },
+                {
+                    question: "What types of activities will we do?",
+                    answer: "You'll participate in weekly lectures and tutorials. These include microteaching, simulated learning, practical demonstrations, AI tool exploration, and collaborative discussions."
+                },
+                {
+                    question: "How important is AI in this module?",
+                    answer: "AI is a major focus in Unit 1. You'll learn to use AI ethically and effectively in Life Sciences teaching, including tools like ChatGPT, Claude, and simulation software. However, AI must enhance—not replace—your professional judgment as a teacher."
+                },
+                {
+                    question: "What are the CAPS content strands?",
+                    answer: "CAPS identifies four major strands in Life Sciences: 1) Life at Molecular, Cellular and Tissue Level, 2) Life Processes in Plants and Animals, 3) Environmental Studies, and 4) Diversity, Change and Continuity."
+                },
+                {
+                    question: "Can I use AI for my assignments?",
+                    answer: "You must use AI ethically as a learning tool, not as a shortcut. Never upload personal information to AI systems. Always verify AI outputs with authoritative sources. Academic integrity violations will result in penalties."
+                },
+                {
+                    question: "What support is available?",
+                    answer: "You have access to: peer study groups, online resources and libraries, practical teaching placements through Teaching Practice Office, regular lecturer feedback, and module guides with resources on Blackboard."
+                }
+            ],
+            
+            capsStrands: [
+                {
+                    name: "Life at Molecular, Cellular and Tissue Level",
+                    aiSupport: "Molecular visualization, dynamic cellular process modeling, scaffolded explanations"
+                },
+                {
+                    name: "Life Processes in Plants and Animals",
+                    aiSupport: "Physiological process simulations (gas exchange, circulation, homeostasis)"
+                },
+                {
+                    name: "Environmental Studies",
+                    aiSupport: "Ecological systems modeling, population dynamics, climate effects analysis"
+                },
+                {
+                    name: "Diversity, Change and Continuity",
+                    aiSupport: "Evolution simulations, genetic drift, natural selection scenarios"
+                }
+            ]
+        };
+        
+        function App() {
+            const [activeSection, setActiveSection] = useState('overview');
+            const [chatMessages, setChatMessages] = useState([
+                {
+                    type: 'assistant',
+                    text: "👋 Hello! I'm your LSTV3605 AI tutor. Ask me anything about Life Sciences teaching, AI in education, CAPS curriculum, assessments, or module content!"
+                }
+            ]);
+            const [inputMessage, setInputMessage] = useState('');
+            
+            const handleSendMessage = () => {
+                if (!inputMessage.trim()) return;
+                
+                const newMessages = [...chatMessages, { type: 'user', text: inputMessage }];
+                setChatMessages(newMessages);
+                
+                setTimeout(() => {
+                    const response = generateResponse(inputMessage.toLowerCase());
+                    setChatMessages([...newMessages, { type: 'assistant', text: response }]);
+                }, 500);
+                
+                setInputMessage('');
+            };
+            
+            const generateResponse = (query) => {
+                if (query.includes('ai') || query.includes('artificial intelligence')) {
+                    return `🤖 **AI in Life Sciences Teaching:**\n\nUnit 1 covers AI comprehensively:\n\n**Types of AI:**\n- Generative AI (ChatGPT, Claude, Gemini)\n- Adaptive AI (personalized learning)\n- Simulation-based AI (virtual labs)\n- Predictive analytics\n\n**CAPS Integration:**\nAI supports all 4 CAPS strands:\n1. Molecular/Cellular level - visualizations\n2. Life Processes - physiological simulations\n3. Environmental Studies - ecosystem modeling\n4. Diversity & Change - evolution simulations\n\n**Ethics:**\n⚠️ Never upload personal info (POPIA)\n⚠️ Verify AI outputs - they can "hallucinate"\n⚠️ Use as learning tool, not shortcut\n\nRemember: AI enhances—not replaces—teacher judgment!`;
+                }
+                
+                if (query.includes('test') || query.includes('assessment') || query.includes('exam')) {
+                    return `📝 **Assessment Structure:**\n\n**Theory Test 1 (25%)** - 40 marks\n- Week 7: 23-27 March\n- Units 1-3: AI, Becoming a Teacher, Microteaching\n\n**Theory Test 2 (25%)** - 40 marks\n- Week 12: 20-24 July\n- Units 4-7.1: Philosophy, Curriculum, Teaching LS\n\n**Theory Test 3 (25%)** - 40 marks\n- Week 17: 24-28 August\n- Units 7.2-8: Methods, Inclusivity, Wellness\n\n**Practical Test (25%)** - 50 marks\n- Week 19: 7-11 September\n- All CAPS practicals Grades 10-11\n\n⚠️ NO final exam - continuous assessment only!\n⚠️ Late submission = 0 marks`;
+                }
+                
+                if (query.includes('caps') || query.includes('curriculum')) {
+                    return `📖 **CAPS in Life Sciences:**\n\n**Four Content Strands:**\n\n1️⃣ **Molecular, Cellular & Tissue Level**\n   - Cell structure, biochemistry, genetics\n\n2️⃣ **Life Processes (Plants & Animals)**\n   - Photosynthesis, respiration, circulation, reproduction\n\n3️⃣ **Environmental Studies**\n   - Ecosystems, biodiversity, human impact, sustainability\n\n4️⃣ **Diversity, Change & Continuity**\n   - Evolution, natural selection, classification\n\n**Skills Developed:**\n✓ Interpreting diagrams\n✓ Analyzing data\n✓ Designing investigations\n✓ Scientific communication\n\nUnit 5 covers curriculum in detail!`;
+                }
+                
+                if (query.includes('microteach') || query.includes('practice') || query.includes('presentation')) {
+                    return `🎤 **Microteaching (Unit 3):**\n\nMicroteaching helps you develop teaching skills through:\n\n**Benefits:**\n- Practice in safe environment\n- Immediate feedback from peers and lecturer\n- Build confidence gradually\n- Refine teaching techniques\n\n**Tips for Success:**\n1. Prepare thoroughly - know your content\n2. Time yourself - practice pacing\n3. Engage your "learners"\n4. Use appropriate visuals/aids\n5. Be open to constructive feedback\n6. Reflect on each session\n\n**Covered in Week 6:** 16-19 March\n\nThis is excellent preparation for teaching practice!`;
+                }
+                
+                if (query.includes('question') || query.includes('discuss')) {
+                    return `💭 **Questioning & Discussion (Unit 6):**\n\n**Effective Question Types:**\n\n**Lower-order (Knowledge/Comprehension):**\n- "What is photosynthesis?"\n- "Name the parts of the heart"\n\n**Higher-order (Analysis/Evaluation):**\n- "Why is biodiversity important?"\n- "How would climate change affect this ecosystem?"\n- "Compare mitosis and meiosis"\n\n**Facilitation Strategies:**\n✓ Wait time after questions (3-5 seconds)\n✓ Encourage student-to-student discussion\n✓ Use probing questions for deeper thinking\n✓ Build on student responses\n✓ Create safe environment for wrong answers\n\n**Covered in Week 10:** 20-24 April`;
+                }
+                
+                if (query.includes('practical') || query.includes('experiment') || query.includes('lab')) {
+                    return `🔬 **Practical Work:**\n\n**Practical Test (Week 19):**\n- 50 marks (25% of module)\n- All CAPS practicals from Grades 10-11\n- Date: 7-11 September\n\n**CAPS Practical Skills:**\n✓ Following procedures\n✓ Making observations\n✓ Recording data accurately\n✓ Analyzing results\n✓ Drawing conclusions\n✓ Safety awareness\n\n**Examples include:**\n- Microscopy\n- Dissections\n- Enzyme investigations\n- Population ecology studies\n- Photosynthesis/respiration experiments\n\nStart practicing these throughout the year!`;
+                }
+                
+                if (query.includes('inclusiv') || query.includes('divers') || query.includes('different')) {
+                    return `🌍 **Inclusivity & Individual Differences (Unit 7.3):**\n\n**SA Classroom Diversity:**\n- Linguistic diversity (11 official languages)\n- Socio-economic variations\n- Different learning styles\n- Cognitive diversity\n- Physical abilities\n\n**Strategies for Inclusive Teaching:**\n✓ Use multilingual resources\n✓ Differentiate instruction\n✓ Multiple representations of concepts\n✓ Scaffold support appropriately\n✓ AI-powered personalization\n✓ Culturally responsive teaching\n✓ Universal Design for Learning\n\n**CAPS Principle:**\n"Social transformation" - education must address past inequalities\n\n**Covered in Week 14:** 3-7 August`;
+                }
+                
+                if (query.includes('wellness') || query.includes('stress') || query.includes('emotion')) {
+                    return `💚 **Emotional Wellness (Unit 8):**\n\n**Seven Rules for Teacher Wellness:**\n\nTeaching is demanding - you must care for yourself to effectively care for learners.\n\n**Key Principles:**\n1. Set professional boundaries\n2. Practice self-care regularly\n3. Build support networks\n4. Manage workload realistically\n5. Celebrate small wins\n6. Seek help when needed\n7. Remember your "why"\n\n**Signs of Teacher Burnout:**\n- Emotional exhaustion\n- Depersonalization\n- Reduced efficacy\n\n**Support Available:**\n- Peer support groups\n- Professional counseling\n- Mentorship programs\n\n**Covered in Week 16:** 17-21 August`;
+                }
+                
+                if (query.includes('contact') || query.includes('lecturer') || query.includes('email')) {
+                    return `📧 **Contact Information:**\n\n**Bloemfontein Campus:**\nProf. J.P.H. Pretorius\npretoriusjph@ufs.ac.za\n051 401 3340\n\n**QwaQwa Campus:**\nDr. B.D. Shambare\nShambareB@ufs.ac.za\n058 718 5104\n\n**For all sections:** Contact either lecturer\n**Consultation:** By appointment\n\nCheck Blackboard regularly for announcements!`;
+                }
+                
+                if (query.includes('schedule') || query.includes('week') || query.includes('when')) {
+                    return `📅 **Module Schedule Overview:**\n\n**First Semester:**\n- Weeks 1-10: Units 1-6 + Test 1 (Week 7)\n- Focus: AI, Professional Identity, Curriculum\n\n**Second Semester:**\n- Weeks 11-19: Unit 7-8 + Tests 2 & 3\n- Week 12: Test 2\n- Week 17: Test 3\n- Week 19: Practical Test\n\n**Key Dates:**\n📌 Test 1: 23-27 March\n📌 Test 2: 20-24 July\n📌 Test 3: 24-28 August\n📌 Practical: 7-11 September\n\nCheck Schedule tab for complete breakdown!`;
+                }
+                
+                return `I can help you with:\n\n🤖 AI in Life Sciences teaching\n📝 Assessments and tests\n📖 CAPS curriculum and strands\n🎤 Microteaching tips\n💭 Questioning techniques\n🔬 Practical work\n🌍 Inclusive teaching\n💚 Teacher wellness\n📅 Schedule and dates\n📧 Contact information\n\nWhat would you like to know more about?`;
+            };
+            
+            const renderContent = () => {
+                switch(activeSection) {
+                    case 'overview':
+                        return <OverviewSection />;
+                    case 'schedule':
+                        return <ScheduleSection />;
+                    case 'assessments':
+                        return <AssessmentsSection />;
+                    case 'learning-units':
+                        return <LearningUnitsSection />;
+                    case 'caps':
+                        return <CAPSSection />;
+                    case 'resources':
+                        return <ResourcesSection />;
+                    case 'faq':
+                        return <FAQSection />;
+                    case 'ai-tutor':
+                        return (
+                            <div className="chat-container">
+                                <h2 className="section-title">🤖 AI Tutor</h2>
+                                <div className="chat-messages">
+                                    {chatMessages.map((msg, idx) => (
+                                        <div key={idx} className={`message ${msg.type}`}>
+                                            {msg.text}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="chat-input-container">
+                                    <input 
+                                        type="text" 
+                                        className="chat-input"
+                                        placeholder="Ask me anything about LSTV3605..."
+                                        value={inputMessage}
+                                        onChange={(e) => setInputMessage(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                                    />
+                                    <button className="chat-button" onClick={handleSendMessage}>
+                                        Send
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    default:
+                        return <OverviewSection />;
+                }
+            };
+            
+            return (
+                <div className="app-container">
+                    <div className="header">
+                        <h1>{courseData.moduleInfo.code}: {courseData.moduleInfo.name}</h1>
+                        <p>{courseData.moduleInfo.credits} Credits | NQF Level {courseData.moduleInfo.nqfLevel} | {courseData.moduleInfo.department}</p>
+                    </div>
+                    
+                    <div className="main-content">
+                        <div className="sidebar">
+                            <div className={`nav-item ${activeSection === 'overview' ? 'active' : ''}`} onClick={() => setActiveSection('overview')}>
+                                📊 Overview
+                            </div>
+                            <div className={`nav-item ${activeSection === 'schedule' ? 'active' : ''}`} onClick={() => setActiveSection('schedule')}>
+                                📅 Schedule
+                            </div>
+                            <div className={`nav-item ${activeSection === 'assessments' ? 'active' : ''}`} onClick={() => setActiveSection('assessments')}>
+                                📝 Assessments
+                            </div>
+                            <div className={`nav-item ${activeSection === 'learning-units' ? 'active' : ''}`} onClick={() => setActiveSection('learning-units')}>
+                                📚 Learning Units
+                            </div>
+                            <div className={`nav-item ${activeSection === 'caps' ? 'active' : ''}`} onClick={() => setActiveSection('caps')}>
+                                📖 CAPS Strands
+                            </div>
+                            <div className={`nav-item ${activeSection === 'resources' ? 'active' : ''}`} onClick={() => setActiveSection('resources')}>
+                                📑 Resources
+                            </div>
+                            <div className={`nav-item ${activeSection === 'faq' ? 'active' : ''}`} onClick={() => setActiveSection('faq')}>
+                                ❓ FAQ
+                            </div>
+                            <div className={`nav-item ${activeSection === 'ai-tutor' ? 'active' : ''}`} onClick={() => setActiveSection('ai-tutor')}>
+                                🤖 AI Tutor
+                            </div>
+                        </div>
+                        
+                        <div className="content-area">
+                            {renderContent()}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        function OverviewSection() {
+            return (
+                <div>
+                    <h2 className="section-title">Module Overview</h2>
+                    
+                    <div className="card">
+                        <h3>📚 Welcome to LSTV3605!</h3>
+                        <p>{courseData.moduleInfo.description}</p>
+                    </div>
+                    
+                    <div className="card">
+                        <h3>👨‍🏫 Lecturer Information</h3>
+                        <p><strong>Bloemfontein Campus:</strong> {courseData.moduleInfo.lecturers[0]}</p>
+                        <p>Email: {courseData.moduleInfo.emails[0]}</p>
+                        <p>Phone: {courseData.moduleInfo.phones[0]}</p>
+                        <br/>
+                        <p><strong>QwaQwa Campus:</strong> {courseData.moduleInfo.lecturers[1]}</p>
+                        <p>Email: {courseData.moduleInfo.emails[1]}</p>
+                        <p>Phone: {courseData.moduleInfo.phones[1]}</p>
+                    </div>
+                    
+                    <div className="card">
+                        <h3>🎯 Module Purpose</h3>
+                        <p><strong>1. Comprehensive Life Sciences Knowledge:</strong> Equip you with deep understanding of Life Sciences content aligned to CAPS for FET Phase</p>
+                        <p><strong>2. Pedagogical Excellence:</strong> Develop effective teaching strategies for diverse educational contexts</p>
+                        <p><strong>3. Integration of Knowledge:</strong> Seamlessly blend academic knowledge with practical teaching skills</p>
+                    </div>
+                    
+                    <div className="warning-box">
+                        <h3>⚠️ Important Module Policies</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            <li><strong>No final exam</strong> - continuous assessment only</li>
+                            <li><strong>Late submission = 0</strong> - no exceptions without valid documentation</li>
+                            <li>Weekly contact sessions (blend of f2f and online)</li>
+                            <li>Full participation in lectures and tutorials required</li>
+                        </ul>
+                    </div>
+                    
+                    <div className="success-box">
+                        <h3>✨ Graduate Attributes You'll Develop</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            <li><strong>Critical Thinking:</strong> Through tests, tutorials, and reflections</li>
+                            <li><strong>Problem-Solving:</strong> Through presentations and practicals</li>
+                            <li><strong>Oral Communication:</strong> Through microteaching and simulated teaching</li>
+                            <li><strong>Written Communication:</strong> Through assessments and assignments</li>
+                            <li><strong>Community Engagement:</strong> Through practical teaching evaluation</li>
+                        </ul>
+                    </div>
+                    
+                    <div className="quick-links">
+                        <div className="quick-link-card" onClick={() => window.open('https://www.ufs.ac.za', '_blank')}>
+                            <h3>🌐 UFS Website</h3>
+                            <p>University Resources</p>
+                        </div>
+                        <div className="quick-link-card" onClick={() => alert('Access Blackboard through your UFS portal')}>
+                            <h3>📱 Blackboard</h3>
+                            <p>Course Materials</p>
+                        </div>
+                        <div className="quick-link-card" onClick={() => alert('Email lecturers for appointments')}>
+                            <h3>📧 Contact</h3>
+                            <p>Book Consultation</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        function ScheduleSection() {
+            return (
+                <div>
+                    <h2 className="section-title">📅 Module Schedule 2026</h2>
+                    
+                    <div className="timeline">
+                        {courseData.schedule.map((item, idx) => (
+                            <div key={idx} className="timeline-item">
+                                <div className={`card week-card ${item.assessment ? 'assessment-card' : ''}`}>
+                                    <div className="week-number">Week {item.week} - {item.date}</div>
+                                    <h3>{item.theme}</h3>
+                                    <p>{item.activity}</p>
+                                    {item.assessment && <p className="due-date">📌 ASSESSMENT WEEK</p>}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    <div className="card" style={{marginTop: '24px', background: '#fef3c7'}}>
+                        <h3>🗓️ Key Assessment Dates</h3>
+                        <p><strong>Theory Test 1:</strong> Week 7 (23-27 March)</p>
+                        <p><strong>Theory Test 2:</strong> Week 12 (20-24 July)</p>
+                        <p><strong>Theory Test 3:</strong> Week 17 (24-28 August)</p>
+                        <p><strong>Practical Test:</strong> Week 19 (7-11 September)</p>
+                    </div>
+                </div>
+            );
+        }
+        
+        function AssessmentsSection() {
+            return (
+                <div>
+                    <h2 className="section-title">📝 Assessments</h2>
+                    
+                    <div className="warning-box">
+                        <h3>⚠️ Critical Information</h3>
+                        <p><strong>This is a NON-EXAMINABLE module.</strong> Assessment is continuous throughout the year. No final examination will be written.</p>
+                        <p><strong>Late submission or non-submission = 0 marks awarded.</strong></p>
+                    </div>
+                    
+                    {courseData.assessments.map((assessment, idx) => (
+                        <div key={idx} className="card assessment-card">
+                            <h3>{assessment.name} ({assessment.type})</h3>
+                            <p><strong>Weight:</strong> {assessment.weight} ({assessment.marks} marks)</p>
+                            <p><strong>Date:</strong> <span className="due-date">{assessment.date}</span></p>
+                            <p><strong>Topics:</strong> {assessment.topics}</p>
+                            <p><strong>Format:</strong> {assessment.description}</p>
+                        </div>
+                    ))}
+                    
+                    <div className="card">
+                        <h3>📊 Final Mark Calculation</h3>
+                        <p>Theory Test 1: 25% (40 marks)</p>
+                        <p>Theory Test 2: 25% (40 marks)</p>
+                        <p>Theory Test 3: 25% (40 marks)</p>
+                        <p>Practical Test: 25% (50 marks)</p>
+                        <p style={{marginTop: '12px', fontWeight: 'bold', color: '#065f46'}}>Total: 100%</p>
+                    </div>
+                    
+                    <div className="success-box">
+                        <h3>✅ Test Preparation Tips</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            <li>Attend all lectures and tutorials</li>
+                            <li>Complete weekly practicals</li>
+                            <li>Form study groups</li>
+                            <li>Review notes after each session</li>
+                            <li>Practice CAPS practicals regularly</li>
+                            <li>Use the AI Tutor for quick reviews</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+        
+        function LearningUnitsSection() {
+            return (
+                <div>
+                    <h2 className="section-title">📚 Learning Units</h2>
+                    
+                    {courseData.learningUnits.map((unit, idx) => (
+                        <div key={idx} className="card unit-card">
+                            <h3>Unit {unit.number}: {unit.title}</h3>
+                            
+                            {unit.subunits && (
+                                <div style={{marginTop: '12px'}}>
+                                    <strong>Subunits:</strong>
+                                    <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                        {unit.subunits.map((sub, sidx) => (
+                                            <li key={sidx}>{sub}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                            
+                            <div style={{marginTop: '16px'}}>
+                                <strong>Learning Outcomes:</strong>
+                                <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                                    {unit.outcomes.map((outcome, oidx) => (
+                                        <li key={oidx}>{outcome}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    ))}
+                    
+                    <div className="success-box" style={{marginTop: '20px'}}>
+                        <h3>💡 Study Strategy</h3>
+                        <p>Each unit builds on previous knowledge. Master each unit before moving forward!</p>
+                        <p><strong>Recommended approach:</strong></p>
+                        <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                            <li>Read unit materials before class</li>
+                            <li>Participate actively in practicals</li>
+                            <li>Complete tutorial activities</li>
+                            <li>Formulate your own secondary outcomes for each unit</li>
+                            <li>Connect theory to CAPS curriculum</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+        
+        function CAPSSection() {
+            return (
+                <div>
+                    <h2 className="section-title">📖 CAPS Content Strands</h2>
+                    
+                    <div className="card">
+                        <h3>🎯 The Four CAPS Strands in Life Sciences</h3>
+                        <p>CAPS (Curriculum and Assessment Policy Statement) organizes Life Sciences content into four interconnected strands. Understanding these is essential for effective teaching!</p>
+                    </div>
+                    
+                    {courseData.capsStrands.map((strand, idx) => (
+                        <div key={idx} className="card unit-card">
+                            <h3>{idx + 1}. {strand.name}</h3>
+                            <p><strong>AI Support Available:</strong> {strand.aiSupport}</p>
+                        </div>
+                    ))}
+                    
+                    <div className="card">
+                        <h3>🔬 CAPS Scientific Skills</h3>
+                        <p>Throughout all strands, learners develop these essential skills:</p>
+                        <ul style={{marginLeft: '20px', marginTop: '12px'}}>
+                            <li>Interpreting diagrams and graphs</li>
+                            <li>Constructing and analyzing data representations</li>
+                            <li>Designing scientific investigations</li>
+                            <li>Evaluating evidence and drawing conclusions</li>
+                            <li>Communicating scientific findings effectively</li>
+                        </ul>
+                    </div>
+                    
+                    <div className="warning-box">
+                        <h3>📌 Teaching Tip</h3>
+                        <p>When planning lessons, always identify which CAPS strand(s) you're addressing and which scientific skills you're developing. This ensures curriculum alignment!</p>
+                    </div>
+                    
+                    <div className="success-box">
+                        <h3>✨ How AI Supports CAPS</h3>
+                        <p>Unit 1 explores how AI tools can enhance teaching across all four strands:</p>
+                        <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                            <li><strong>Visualization:</strong> Make abstract concepts concrete</li>
+                            <li><strong>Simulation:</strong> Model processes too complex/dangerous for classroom</li>
+                            <li><strong>Differentiation:</strong> Support diverse learners</li>
+                            <li><strong>Assessment:</strong> Provide immediate, personalized feedback</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+        
+        function ResourcesSection() {
+            return (
+                <div>
+                    <h2 className="section-title">📑 Resources & Support</h2>
+                    
+                    <div className="card">
+                        <h3>📚 Essential Documents</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            <li>CAPS Life Sciences (Grades 10-12) - Department of Basic Education</li>
+                            <li>Module Guide 2026 - Available on Blackboard</li>
+                            <li>Unit Notes - Aligned with learning outcomes</li>
+                            <li>Practical Workshop Resources - On Blackboard</li>
+                            <li>Lecture Slides - Posted weekly</li>
+                            <li>Lesson Plan Templates - For microteaching</li>
+                        </ul>
+                    </div>
+                    
+                    <div className="card">
+                        <h3>🤖 AI Tools for Life Sciences</h3>
+                        <p>Explore these tools covered in Unit 1:</p>
+                        <ul style={{marginLeft: '20px', marginTop: '8px'}}>
+                            <li><strong>Generative AI:</strong> ChatGPT, Claude, Gemini - for explanations and materials</li>
+                            <li><strong>Adaptive Platforms:</strong> Personalized learning systems</li>
+                            <li><strong>Simulation Tools:</strong> Virtual labs and modeling software</li>
+                            <li><strong>Assessment Tools:</strong> AI-enhanced feedback systems</li>
+                        </ul>
+                        <p style={{marginTop: '12px', color: '#dc2626', fontWeight: 'bold'}}>⚠️ Remember: Always verify AI outputs and maintain academic integrity!</p>
+                    </div>
+                    
+                    <div className="card">
+                        <h3>🆘 Support Available</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            <li><strong>Peer Study Groups:</strong> Collaborative learning opportunities</li>
+                            <li><strong>Blackboard Resources:</strong> Module guides, slides, readings</li>
+                            <li><strong>Library Access:</strong> Online resources and research databases</li>
+                            <li><strong>Practical Teaching Placements:</strong> Through Teaching Practice Office</li>
+                            <li><strong>Regular Feedback:</strong> From lecturers during tutorials</li>
+                            <li><strong>AI Tutor:</strong> 24/7 support through this portal</li>
+                        </ul>
+                    </div>
+                    
+                    <div className="success-box">
+                        <h3>💡 Study Tips for Success</h3>
+                        <ul style={{marginLeft: '20px'}}>
+                            <li>Study unit notes alongside CAPS documents</li>
+                            <li>Practice CAPS practicals hands-on whenever possible</li>
+                            <li>Connect theoretical content to classroom applications</li>
+                            <li>Engage deeply in microteaching sessions</li>
+                            <li>Build your professional teaching portfolio</li>
+                            <li>Network with peers - future colleagues!</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+        
+        function FAQSection() {
+            const [openFAQ, setOpenFAQ] = useState(null);
+            
+            return (
+                <div>
+                    <h2 className="section-title">❓ Frequently Asked Questions</h2>
+                    
+                    {courseData.faqs.map((faq, idx) => (
+                        <div key={idx} className="faq-item">
+                            <div 
+                                className="faq-question" 
+                                onClick={() => setOpenFAQ(openFAQ === idx ? null : idx)}
+                            >
+                                {faq.question} {openFAQ === idx ? '▼' : '▶'}
+                            </div>
+                            {openFAQ === idx && (
+                                <div className="faq-answer">{faq.answer}</div>
+                            )}
+                        </div>
+                    ))}
+                    
+                    <div className="success-box" style={{marginTop: '24px'}}>
+                        <h3>💬 Still Have Questions?</h3>
+                        <p>Try the AI Tutor for instant answers, or contact your lecturer:</p>
+                        <p><strong>Bloemfontein:</strong> Prof. J.P.H. Pretorius (pretoriusjph@ufs.ac.za)</p>
+                        <p><strong>QwaQwa:</strong> Dr. B.D. Shambare (ShambareB@ufs.ac.za)</p>
+                    </div>
+                </div>
+            );
+        }
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
